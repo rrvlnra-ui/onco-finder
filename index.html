@@ -1,0 +1,1070 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Oncology Research Finder</title>
+<meta name="description" content="Personal oncology search hub: one set of keywords searches literature, meeting abstracts, trial registries, guidelines and genomic databases.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Onco Finder">
+<meta name="theme-color" content="#f4f6f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c1519" media="(prefers-color-scheme: dark)">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* ---------- tokens ---------- */
+:root{
+  --bg:#f4f6f5; --surface:#ffffff; --surface-2:#eaf0ee; --line:#d6dfdc;
+  --ink:#10212b; --ink-2:#3e5059; --ink-3:#66767e;
+  --accent:#0b6e69; --accent-ink:#ffffff; --accent-soft:#dcefed;
+  --violet:#5b3fa6; --violet-soft:#ece6f8;
+  --warn:#9a5b00; --warn-soft:#fbf0dc;
+  --shadow:0 1px 2px rgba(16,33,43,.06);
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --sans:"Public Sans","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0c1519; --surface:#132026; --surface-2:#1a2b32; --line:#26383f;
+    --ink:#e9f1f0; --ink-2:#b5c4c6; --ink-3:#8a9ca0;
+    --accent:#4cc1b8; --accent-ink:#071214; --accent-soft:#143532;
+    --violet:#a995ea; --violet-soft:#241d3a; --warn:#e2a64e; --warn-soft:#33270f; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0c1519; --surface:#132026; --surface-2:#1a2b32; --line:#26383f;
+  --ink:#e9f1f0; --ink-2:#b5c4c6; --ink-3:#8a9ca0;
+  --accent:#4cc1b8; --accent-ink:#071214; --accent-soft:#143532;
+  --violet:#a995ea; --violet-soft:#241d3a; --warn:#e2a64e; --warn-soft:#33270f; --shadow:none;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;margin:0}
+.wrap{max-width:1320px;margin:0 auto;padding-inline:clamp(16px,3vw,40px)}
+h1,h2,h3{margin:0;text-wrap:balance}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+a{color:inherit}
+
+/* ---------- header + query ---------- */
+header{padding-block:28px 8px}
+.eyebrow{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,3.6vw,44px);letter-spacing:-.01em;line-height:1.1;margin-top:4px}
+.lede{color:var(--ink-2);max-width:72ch;margin:8px 0 0}
+
+.query{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding-block:14px}
+.qrow{display:grid;grid-template-columns:minmax(0,2.4fr) repeat(3,minmax(0,1fr)) auto;gap:10px;align-items:end}
+@media (max-width:980px){.qrow{grid-template-columns:1fr 1fr}.qrow .main{grid-column:1/-1}}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:.04em;text-transform:uppercase}
+input[type=text],input[type=search],select{height:44px;border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:0 12px;font-size:15px;text-transform:none;letter-spacing:0;font-weight:400;color:var(--ink);width:100%;min-width:0}
+.main input{height:50px;font-size:17px;border:1.5px solid var(--accent)}
+.opts{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-top:10px;font-size:14px;color:var(--ink-2)}
+.opts label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
+.preview{font-family:var(--mono);font-size:13px;color:var(--ink-2);background:var(--surface-2);border-radius:8px;padding:6px 10px;overflow-wrap:anywhere;flex:1 1 320px}
+.preview b{color:var(--ink);font-weight:500}
+.btn{height:44px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:0 14px;cursor:pointer;font-weight:600;white-space:nowrap}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn:hover{border-color:var(--ink-3)}
+.btn.small{height:32px;font-size:13px;padding:0 10px;border-radius:8px}
+
+/* ---------- chips ---------- */
+.chipbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px}
+.chipbar .lbl{font-size:12px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em;margin-right:4px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 10px;font-size:13px;cursor:pointer;color:var(--ink-2)}
+.chip:hover{border-color:var(--accent);color:var(--ink)}
+.chip.h{border-color:color-mix(in srgb,var(--violet) 40%,var(--line))}
+details.presets{margin-top:8px}
+details.presets summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--accent);list-style:none}
+details.presets summary::-webkit-details-marker{display:none}
+details.presets summary::before{content:"+ ";}
+details.presets[open] summary::before{content:"− ";}
+
+/* ---------- layout ---------- */
+.layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:28px;padding-block:22px 48px}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+nav.cats{position:sticky;top:calc(env(safe-area-inset-top,0px) + 190px);align-self:start;display:flex;flex-direction:column;gap:2px}
+@media (max-width:900px){nav.cats{position:static;flex-direction:row;flex-wrap:wrap;gap:6px}}
+nav.cats a{display:flex;justify-content:space-between;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:var(--ink-2);font-size:14px}
+nav.cats a:hover{background:var(--surface-2);color:var(--ink)}
+nav.cats a span{color:var(--ink-3);font-size:12px;font-variant-numeric:tabular-nums}
+@media (max-width:900px){nav.cats a{border:1px solid var(--line);background:var(--surface)}}
+.filterrow{display:flex;gap:10px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
+.filterrow input{max-width:300px;height:38px}
+.count{font-size:13px;color:var(--ink-3)}
+
+section.cat{scroll-margin-top:200px;margin-bottom:30px}
+.cat-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:6px;margin-bottom:12px}
+.cat-h h2{font-family:var(--serif);font-weight:600;font-size:23px}
+.cat-h p{margin:0;color:var(--ink-3);font-size:13.5px;max-width:70ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:10px}
+a.src{display:flex;flex-direction:column;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 13px;text-decoration:none;box-shadow:var(--shadow);min-width:0;position:relative}
+a.src:hover{border-color:var(--accent)}
+a.src .n{font-weight:600;font-size:14.5px;display:flex;gap:8px;align-items:baseline;justify-content:space-between}
+a.src .n::after{content:"↗";color:var(--ink-3);font-weight:400}
+a.src .d{font-size:13px;color:var(--ink-2)}
+a.src .m{font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;width:fit-content;border-radius:5px;padding:1px 6px}
+.m.direct{background:var(--accent-soft);color:var(--accent)}
+.m.site{background:var(--violet-soft);color:var(--violet)}
+.m.open{background:var(--warn-soft);color:var(--warn)}
+.au{font-size:11px;font-weight:700;color:var(--ink-3);margin-left:auto}
+
+/* ---------- saved ---------- */
+.saved{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:26px}
+.saved h2{font-family:var(--serif);font-size:20px;font-weight:600}
+.saved-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sv{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface-2)}
+.sv button{border:0;background:none;padding:6px 10px;cursor:pointer;font-size:13.5px}
+.sv button.x{color:var(--ink-3);border-left:1px solid var(--line);padding:6px 9px}
+.empty{color:var(--ink-3);font-size:13.5px}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;font-size:13px;color:var(--ink-2);margin-top:10px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:14px;z-index:40}
+footer{color:var(--ink-3);font-size:13px;padding-block:0 36px}
+
+/* ---------- my sources ---------- */
+.mine-panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:26px}
+.mine-panel h2{font-family:var(--serif);font-size:20px;font-weight:600}
+.mine-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.store-note{font-size:13px;color:var(--ink-3)}
+.store-note b{color:var(--accent);font-weight:600}
+form.addsrc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin-top:14px;border-top:1px solid var(--line);padding-top:14px}
+@media (max-width:700px){form.addsrc{grid-template-columns:1fr}}
+form.addsrc .full{grid-column:1/-1}
+.kinds{display:flex;flex-wrap:wrap;gap:8px}
+.kinds label{display:flex;gap:8px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;flex:1 1 220px;font-size:14px;text-transform:none;letter-spacing:0;font-weight:500;color:var(--ink)}
+.kinds label small{display:block;color:var(--ink-3);font-weight:400;font-size:12.5px}
+.kinds input{accent-color:var(--accent);margin-top:3px}
+.kinds label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.hint{font-size:12.5px;color:var(--ink-3);font-weight:400;text-transform:none;letter-spacing:0}
+.formerr{color:#b42318;font-size:13.5px}
+.formactions{display:flex;gap:10px;align-items:center}
+.srcwrap{position:relative;min-width:0}
+.srcwrap a.src{height:100%;padding-right:34px}
+.srcwrap .del{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink-3);cursor:pointer;line-height:1;font-size:15px}
+.srcwrap .del:hover{color:var(--ink);border-color:var(--ink-3)}
+.m.mine{background:var(--ink);color:var(--bg)}
+/* ---------- search all ---------- */
+.qrow{grid-template-columns:minmax(0,2.4fr) repeat(3,minmax(0,1fr)) auto auto}
+@media (max-width:980px){.qrow{grid-template-columns:1fr 1fr}}
+.btn.go{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);padding:0 18px}
+.btn.go:hover{border-color:var(--ink)}
+.cat-tools{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.linkbtn{border:0;background:none;padding:0;color:var(--accent);font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap}
+.linkbtn:hover{text-decoration:underline}
+.sa-back{position:fixed;inset:0;background:color-mix(in srgb,var(--ink) 38%,transparent);z-index:50}
+.sa{position:fixed;top:0;right:0;bottom:0;width:min(560px,100%);background:var(--surface);border-left:1px solid var(--line);z-index:51;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:-8px 0 30px rgba(16,33,43,.12)}
+.sa-head{padding:18px 20px 14px;border-bottom:1px solid var(--line);display:grid;gap:12px}
+.sa-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.sa-top h2{font-family:var(--serif);font-size:26px;font-weight:600;line-height:1.1}
+.sa-close{width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:20px;line-height:1;color:var(--ink-2);flex:none}
+.sa-q{font-family:var(--mono);font-size:13px;background:var(--surface-2);border-radius:8px;padding:6px 10px;overflow-wrap:anywhere;color:var(--ink)}
+.sa-lbl{font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:.05em;text-transform:uppercase}
+.sa-scope{display:flex;flex-wrap:wrap;gap:6px}
+.sa-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:3px 10px 3px 8px;font-size:13px;cursor:pointer;color:var(--ink-2);background:var(--surface)}
+.sa-chip:has(input:checked){border-color:var(--accent);background:var(--accent-soft);color:var(--ink)}
+.sa-chip input{accent-color:var(--accent);width:14px;height:14px;margin:0}
+.sa-chip span{font-size:11.5px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.sa-opts{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13.5px;color:var(--ink-2)}
+.sa-opts label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.sa-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sa-actions .btn{height:42px}
+a.btn{display:inline-flex;align-items:center;text-decoration:none;max-width:100%;min-width:0}
+a.btn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+a.btn[aria-disabled=true]{pointer-events:none;opacity:.55}
+.sa-prog{display:grid;gap:5px}
+.sa-prog .bar{height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.sa-prog .bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .25s}
+.sa-prog .t{font-size:13px;color:var(--ink-3);font-variant-numeric:tabular-nums;display:flex;justify-content:space-between;gap:10px}
+.sa-note{font-size:13.5px;background:var(--warn-soft);color:var(--ink);border-radius:8px;padding:8px 11px}
+.sa-list{overflow:auto;flex:1;padding:6px 20px 24px;min-height:0}
+.sa-list h3{font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:.05em;text-transform:uppercase;margin:16px 0 4px}
+.sa-row{display:flex;align-items:center;gap:10px;padding:7px 8px;margin-inline:-8px;border-radius:7px;border-bottom:1px solid var(--line)}
+.sa-row a{flex:1;min-width:0;text-decoration:none;font-weight:500;font-size:14.5px;overflow-wrap:anywhere}
+.sa-row a:hover{color:var(--accent)}
+.sa-row .st{flex:none;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:11px;font-weight:700;color:transparent}
+.sa-row .m{flex:none}
+.sa-row.done .st{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.sa-row.done a{color:var(--ink-3)}
+.sa-row.next{background:var(--accent-soft)}
+.sa-empty{color:var(--ink-3);font-size:14px;padding:18px 0}
+/* ---------- source directory ---------- */
+.dir{scroll-margin-top:200px;margin-top:44px}
+.dir details{border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-bottom:8px}
+.dir summary{cursor:pointer;padding:10px 14px;display:flex;justify-content:space-between;gap:12px;align-items:baseline;font-weight:600;list-style:none}
+.dir summary::-webkit-details-marker{display:none}
+.dir summary::before{content:"+";color:var(--accent);width:1em;flex:none}
+.dir details[open] summary::before{content:"−"}
+.dir summary .nm{flex:1;min-width:0}
+.dir summary .ct{font-size:12.5px;color:var(--ink-3);font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tbl{overflow-x:auto;border-top:1px solid var(--line)}
+.dir table{width:100%;border-collapse:collapse;font-size:13.5px}
+.dir th{text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);padding:8px 14px;background:var(--surface-2)}
+.dir td{padding:8px 14px;border-top:1px solid var(--line);vertical-align:top}
+.dir td.src-n{font-weight:600;min-width:150px}
+.dir td.dom{font-family:var(--mono);font-size:12px;color:var(--ink-2);overflow-wrap:anywhere;min-width:160px}
+.dir td.how{white-space:nowrap}
+.dir .tools{display:flex;gap:12px;margin-bottom:10px}
+/* ---------- app: query bar ---------- */
+.qrow{grid-template-columns:minmax(0,2.4fr) repeat(3,minmax(0,1fr)) auto}
+.qbtns{display:flex;gap:8px}
+@media (max-width:980px){.qrow{grid-template-columns:1fr 1fr}.qbtns{grid-column:1/-1}.qbtns .btn{flex:1}}
+@media (max-width:900px){
+  .query{position:static}
+  input[type=text],input[type=search],select,.main input{font-size:16px}
+}
+.btn:disabled{opacity:.55;cursor:default}
+
+/* ---------- app: live results ---------- */
+.live{margin-bottom:30px;scroll-margin-top:16px}
+@media (min-width:901px){.live{scroll-margin-top:200px}}
+.live-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:6px;margin-bottom:12px}
+.live-h h2{font-family:var(--serif);font-weight:600;font-size:23px}
+.live-h p{margin:0;color:var(--ink-3);font-size:13.5px}
+.stale{font-size:13.5px;color:var(--warn);background:var(--warn-soft);border-radius:8px;padding:6px 10px;margin:-4px 0 12px}
+.lcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:12px;align-items:start}
+.lcol{background:var(--surface);border:1px solid var(--line);border-radius:12px;min-width:0;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.lcol-h{padding:12px 14px 10px;border-bottom:1px solid var(--line);display:grid;gap:6px}
+.lcol-h .t{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.lcol-h b{font-size:15.5px;font-weight:600}
+.lcol-h .c{font-size:12.5px;color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap}
+.lcol-h .s{font-size:12.5px;color:var(--ink-3)}
+.lcol-h .o{display:flex;gap:6px 12px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--ink-2)}
+.lcol-h .o label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.lcol-h .o select{height:32px;width:auto;padding:0 8px;border-radius:8px;font-size:13px}
+ol.rl{list-style:none;margin:0;padding:0}
+ol.rl li{padding:10px 14px;border-bottom:1px solid var(--line);display:grid;gap:4px;min-width:0}
+ol.rl li:last-child{border-bottom:0}
+ol.rl a{text-decoration:none;font-weight:500;font-size:14px;line-height:1.38;overflow-wrap:anywhere}
+ol.rl a:hover{color:var(--accent);text-decoration:underline}
+.rm{font-size:12.5px;color:var(--ink-3);overflow-wrap:anywhere}
+.rtags{display:flex;gap:5px;flex-wrap:wrap}
+.rtag{font-size:11px;font-weight:600;border-radius:5px;padding:1px 6px;background:var(--surface-2);color:var(--ink-2)}
+.rtag.ok{background:var(--accent-soft);color:var(--accent)}
+.rtag.vi{background:var(--violet-soft);color:var(--violet)}
+.lmsg{padding:14px;font-size:13.5px;color:var(--ink-2)}
+.lmsg a{color:var(--accent);font-weight:600}
+.lcol-f{padding:10px 14px;border-top:1px solid var(--line);font-size:13.5px;margin-top:auto}
+.lcol-f a{color:var(--accent);font-weight:600;text-decoration:none}
+.lcol-f a:hover{text-decoration:underline}
+.sk{display:grid;gap:7px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.sk i{display:block;height:10px;border-radius:5px;background:var(--surface-2);animation:pulse 1.2s ease-in-out infinite}
+.sk i:nth-child(2){width:70%}.sk i:nth-child(3){width:45%;height:8px}
+@keyframes pulse{50%{opacity:.45}}
+
+/* ---------- app: backup ---------- */
+.backup{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink-3)}
+.offline{font-size:13px;color:var(--warn);font-weight:600}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <div class="eyebrow">Personal search hub · oncology research <span class="offline" id="offline" hidden>· Offline</span></div>
+  <h1>Oncology Research Finder</h1>
+  <p class="lede">Type your keywords once and press Search. The newest papers, preprints and recruiting trials appear here, and every source below updates to search the same terms: meeting abstracts, registries, guidelines, genomics databases, investigators and images.</p>
+</header>
+
+<div class="query">
+  <div class="wrap">
+    <form class="qrow" id="qform" role="search" novalidate>
+      <label class="f main">Keywords
+        <input id="q" type="search" placeholder="e.g. HER2-low breast cancer antibody–drug conjugate" autocomplete="off">
+      </label>
+      <label class="f">Cancer type
+        <select id="ct"></select>
+      </label>
+      <label class="f">Gene / target
+        <input id="gene" type="text" placeholder="e.g. KRAS G12C" autocomplete="off">
+      </label>
+      <label class="f">Drug / agent
+        <input id="drug" type="text" placeholder="e.g. sotorasib" autocomplete="off">
+      </label>
+      <div class="qbtns">
+        <button class="btn go" id="go" type="submit">Search</button>
+        <button class="btn" id="searchAll" type="button" aria-haspopup="dialog" title="Open the search on every source">Open all</button>
+        <button class="btn" id="clear" type="button">Clear</button>
+      </div>
+    </form>
+    <div class="opts">
+      <label><input type="checkbox" id="exact"> Exact phrase for keywords</label>
+      <label><input type="checkbox" id="recent"> PubMed: last 5 years</label>
+      <div class="preview" id="preview">Search string: <b>–</b></div>
+      <button class="btn small primary" id="save" type="button">Save this search</button>
+    </div>
+    <details class="presets">
+      <summary>Quick-add terms: hallmarks of cancer, trial types, modalities</summary>
+      <div class="chipbar" id="chipsH"><span class="lbl">Hallmarks</span></div>
+      <div class="chipbar" id="chipsT"><span class="lbl">Trials</span></div>
+      <div class="chipbar" id="chipsM"><span class="lbl">Modalities</span></div>
+    </details>
+  </div>
+</div>
+
+<div class="wrap layout">
+  <nav class="cats" id="nav" aria-label="Categories"></nav>
+  <main>
+    <section class="live" id="live" aria-labelledby="liveH">
+      <div class="live-h"><h2 id="liveH">Latest results</h2><p id="liveSum">Top 10 from PubMed, Europe PMC preprints and ClinicalTrials.gov, loaded in the app.</p></div>
+      <div class="stale" id="stale" hidden></div>
+      <div class="lcols">
+        <article class="lcol" aria-labelledby="pmH">
+          <div class="lcol-h">
+            <div class="t"><b id="pmH">PubMed</b><span class="c" id="pmCount"></span></div>
+            <span class="s">Peer-reviewed literature</span>
+            <div class="o"><label>Sort <select id="pmSort"><option value="relevance">Best match</option><option value="pub_date">Most recent</option></select></label></div>
+          </div>
+          <div id="pmBody"><div class="lmsg">Press <b>Search</b> to list the 10 best-matching papers. Ticking "PubMed: last 5 years" applies here too.</div></div>
+          <div class="lcol-f" id="pmFoot" hidden></div>
+        </article>
+        <article class="lcol" aria-labelledby="ppH">
+          <div class="lcol-h">
+            <div class="t"><b id="ppH">Preprints</b><span class="c" id="ppCount"></span></div>
+            <span class="s">bioRxiv, medRxiv and others via Europe PMC. Not yet peer reviewed.</span>
+          </div>
+          <div id="ppBody"><div class="lmsg">Press <b>Search</b> to list the 10 newest matching preprints.</div></div>
+          <div class="lcol-f" id="ppFoot" hidden></div>
+        </article>
+        <article class="lcol" aria-labelledby="ctH">
+          <div class="lcol-h">
+            <div class="t"><b id="ctH">Open trials</b><span class="c" id="ctCount"></span></div>
+            <span class="s">ClinicalTrials.gov: recruiting or not yet recruiting</span>
+            <div class="o"><label><input type="checkbox" id="ctAu"> Sites in Australia only</label></div>
+          </div>
+          <div id="ctBody"><div class="lmsg">Press <b>Search</b> to list matching trials that are open or about to open.</div></div>
+          <div class="lcol-f" id="ctFoot" hidden></div>
+        </article>
+      </div>
+    </section>
+    <section class="saved" aria-label="Saved searches">
+      <h2>My saved searches</h2>
+      <div class="saved-list" id="savedList"></div>
+      <div class="legend">
+        <span><span class="m direct" style="font-size:11px;font-weight:600;border-radius:5px;padding:1px 6px">Direct</span> runs your search on the site itself</span>
+        <span><span class="m site" style="font-size:11px;font-weight:600;border-radius:5px;padding:1px 6px">Web search</span> Google search limited to that site</span>
+        <span><span class="m open" style="font-size:11px;font-weight:600;border-radius:5px;padding:1px 6px">Opens site</span> copies your keywords so you can paste them into the site's own search</span>
+        <span><b>AU</b> Australian source</span>
+      </div>
+      <div class="backup">
+        <span>Saved searches and your own sources stay on this device. To move them between iPhone and Mac:</span>
+        <button class="btn small" id="exportBtn" type="button">Export backup</button>
+        <button class="btn small" id="importBtn" type="button">Import backup</button>
+        <input type="file" id="importFile" accept="application/json,.json" hidden>
+      </div>
+    </section>
+    <section class="mine-panel" aria-label="My sources">
+      <div class="mine-head">
+        <h2>My sources</h2>
+        <span class="store-note" id="storeNote">Saved on this device.</span>
+      </div>
+      <p class="hint" style="margin:6px 0 0;font-size:13.5px">Add any database, registry, journal or website. It appears in the category you choose, marked <span class="m mine" style="font-size:11px;font-weight:600;border-radius:5px;padding:1px 6px">Mine</span>, and searches your keywords like the built-in sources.</p>
+      <button class="btn small" id="addToggle" type="button" style="margin-top:10px" aria-expanded="false" aria-controls="addForm">+ Add a source</button>
+      <form class="addsrc" id="addForm" hidden novalidate>
+        <label class="f">Name
+          <input type="text" id="sName" placeholder="e.g. Peter Mac clinical trials" autocomplete="off">
+        </label>
+        <label class="f">Category
+          <select id="sCat"></select>
+        </label>
+        <div class="f full">How should it search?
+          <div class="kinds" role="radiogroup" aria-label="Source type">
+            <label><input type="radio" name="sKind" value="search" checked><span>Search address<small>Runs your keywords on the site itself. Best for databases.</small></span></label>
+            <label><input type="radio" name="sKind" value="site"><span>Website<small>Google search limited to this site.</small></span></label>
+            <label><input type="radio" name="sKind" value="link"><span>Bookmark<small>Opens the page and copies your keywords.</small></span></label>
+          </div>
+        </div>
+        <label class="f full" id="urlLbl"><span id="urlTitle">Search results address</span>
+          <input type="text" id="sUrl" placeholder="https://…" autocomplete="off" inputmode="url">
+          <span class="hint" id="urlHint">On the site, search for any word (for example <b>melanoma</b>), then copy the address of the results page and paste it here.</span>
+        </label>
+        <label class="f" id="wordLbl">Word you searched for
+          <input type="text" id="sWord" placeholder="melanoma" autocomplete="off">
+          <span class="hint">It is swapped for your keywords each time you search.</span>
+        </label>
+        <label class="f">Note (optional)
+          <input type="text" id="sDesc" placeholder="What it is useful for" autocomplete="off">
+        </label>
+        <div class="full formactions">
+          <button class="btn primary" type="submit">Add source</button>
+          <button class="btn" type="button" id="addCancel">Cancel</button>
+          <span class="formerr" id="sErr" role="alert"></span>
+        </div>
+      </form>
+    </section>
+    <div class="filterrow">
+      <input type="search" id="filter" placeholder="Filter sources by name" aria-label="Filter sources">
+      <span class="count" id="count"></span>
+    </div>
+    <div id="cats"></div>
+    <section class="dir" id="directory" aria-labelledby="dirH">
+      <div class="cat-h"><h2 id="dirH">Source directory</h2><p id="dirSum">Every database and site this page searches, by category.</p></div>
+      <div id="dirBody"></div>
+    </section>
+  </main>
+</div>
+
+<footer class="wrap">Searches run from this device; nothing you type is stored anywhere else. Some sites change their search addresses over time; if a link stops working, its "Web search" fallback still finds the page.</footer>
+
+<div class="sa-back" id="saBack" hidden></div>
+<div class="sa" id="sa" role="dialog" aria-modal="true" aria-labelledby="saH" hidden>
+  <div class="sa-head">
+    <div class="sa-top">
+      <div>
+        <div class="sa-lbl">Open all sources</div>
+        <h2 id="saH">Run your search everywhere</h2>
+      </div>
+      <button class="sa-close" id="saClose" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="sa-q" id="saQ"></div>
+    <div>
+      <div class="sa-lbl" style="margin-bottom:6px">Categories to include</div>
+      <div class="sa-scope" id="saScope"></div>
+    </div>
+    <div class="sa-opts">
+      <label><input type="checkbox" id="saOpen"> Include "Opens site" bookmarks (keywords copied for pasting)</label>
+      <label><input type="checkbox" id="saAu"> Australian sources only</label>
+    </div>
+    <div class="sa-actions">
+      <button class="btn primary" id="saAll" type="button">Open all</button>
+      <a class="btn" id="saNext" href="#" target="_blank" rel="noopener"><span>Open next</span></a>
+      <button class="btn small" id="saReset" type="button">Start over</button>
+    </div>
+    <div class="sa-prog"><div class="bar"><i id="saBar" style="width:0"></i></div><div class="t"><span id="saCount"></span><span id="saHint">Each search opens in its own tab.</span></div></div>
+    <div class="sa-note" id="saNote" role="status" hidden></div>
+  </div>
+  <div class="sa-list" id="saList"></div>
+</div>
+
+<script>
+/* =====================================================================
+   SOURCES
+   kind: 'direct' → url(q) template on the site's own search
+         'site'   → Google search restricted to domain(s)
+         'open'   → opens a page and copies the keywords to the clipboard
+   Query parts: q (keywords), ct (cancer type), gene, drug.
+   ===================================================================== */
+const E = encodeURIComponent;
+const site = (domains, q) => `https://www.google.com/search?q=${E('(' + [].concat(domains).map(d => 'site:' + d).join(' OR ') + ') ' + q)}`;
+
+const CATS = [
+ {id:'lit', name:'Peer-reviewed trials & literature', blurb:'Published clinical trials and research papers. PubMed filters run on PubMed itself.', items:[
+  {n:'PubMed — all', d:'MEDLINE and life-science literature', k:'direct', u:q=>`https://pubmed.ncbi.nlm.nih.gov/?term=${E(q)}${rec()}`},
+  {n:'PubMed — clinical trials', d:'Publication type: clinical trial', k:'direct', u:q=>`https://pubmed.ncbi.nlm.nih.gov/?term=${E(q)}&filter=pubt.clinicaltrial${rec()}`},
+  {n:'PubMed — randomised trials', d:'Publication type: RCT', k:'direct', u:q=>`https://pubmed.ncbi.nlm.nih.gov/?term=${E(q)}&filter=pubt.randomizedcontrolledtrial${rec()}`},
+  {n:'PubMed — reviews', d:'Reviews and systematic reviews', k:'direct', u:q=>`https://pubmed.ncbi.nlm.nih.gov/?term=${E(q)}&filter=pubt.review${rec()}`},
+  {n:'Europe PMC', d:'Literature, preprints and full text', k:'direct', u:q=>`https://europepmc.org/search?query=${E(q)}`},
+  {n:'Google Scholar', d:'Broad scholarly search with citations', k:'direct', u:q=>`https://scholar.google.com/scholar?q=${E(q)}`},
+  {n:'Semantic Scholar', d:'AI-ranked papers and citation graph', k:'direct', u:q=>`https://www.semanticscholar.org/search?q=${E(q)}`},
+  {n:'bioRxiv', d:'Biology preprints', k:'direct', u:q=>`https://www.biorxiv.org/search/${E(q)}`},
+  {n:'medRxiv', d:'Clinical preprints', k:'direct', u:q=>`https://www.medrxiv.org/search/${E(q)}`},
+  {n:'Journal of Clinical Oncology', d:'ASCO journals', k:'site', u:q=>site('ascopubs.org', q)},
+  {n:'Lancet Oncology', d:'The Lancet family', k:'site', u:q=>site('thelancet.com/journals/lanonc', q)},
+  {n:'NEJM', d:'New England Journal of Medicine', k:'site', u:q=>site('nejm.org', q)},
+  {n:'Annals of Oncology', d:'ESMO journal', k:'site', u:q=>site('annalsofoncology.org', q)},
+  {n:'JAMA Oncology', d:'JAMA Network', k:'site', u:q=>site('jamanetwork.com/journals/jamaoncology', q)},
+  {n:'Nature Medicine & Nature Reviews', d:'Nature portfolio', k:'site', u:q=>site(['nature.com/nm','nature.com/nrclinonc','nature.com/nrc'], q)}
+ ]},
+ {id:'meet', name:'Meeting presentations & abstracts', blurb:'Trials presented at major oncology congresses. Abstract sites are searched through Google.', items:[
+  {n:'ASCO meeting abstracts', d:'ASCO Annual, GI, GU, Breakthrough', k:'site', u:q=>site(['meetings.asco.org','ascopubs.org/doi/10.1200/JCO'], q + ' abstract')},
+  {n:'ESMO congress abstracts', d:'ESMO, ESMO Breast, ESMO GI, Asia', k:'site', u:q=>site(['oncologypro.esmo.org','annalsofoncology.org'], q + ' abstract')},
+  {n:'AACR abstracts', d:'AACR Annual Meeting, special conferences', k:'site', u:q=>site('aacrjournals.org', q + ' abstract')},
+  {n:'ASH abstracts', d:'Haematological malignancies', k:'site', u:q=>site('ashpublications.org/blood', q + ' abstract')},
+  {n:'San Antonio Breast (SABCS)', d:'Breast cancer symposium', k:'site', u:q=>site(['sabcs.org','aacrjournals.org/cancerres'], q + ' SABCS')},
+  {n:'World Conference on Lung Cancer', d:'IASLC / JTO abstracts', k:'site', u:q=>site(['jto.org','iaslc.org'], q + ' WCLC')},
+  {n:'SITC (immunotherapy)', d:'JITC abstracts', k:'site', u:q=>site('jitc.bmj.com', q)},
+  {n:'COSA Annual Scientific Meeting', d:'Clinical Oncology Society of Australia', k:'site', au:1, u:q=>site(['cosa.org.au','onlinelibrary.wiley.com/journal/17437563'], q)},
+  {n:'Conference news coverage', d:'OncLive, ASCO Post, Targeted Oncology', k:'site', u:q=>site(['onclive.com','ascopost.com','targetedonc.com'], q)}
+ ]},
+ {id:'reg', name:'Trial registries: ongoing & planned', blurb:'Recruiting and not-yet-recruiting trials worldwide and in Australia.', items:[
+  {n:'ClinicalTrials.gov — all', d:'US registry, global coverage', k:'direct', u:q=>`https://clinicaltrials.gov/search?term=${E(q)}`},
+  {n:'ClinicalTrials.gov — recruiting', d:'Currently recruiting', k:'direct', u:q=>`https://clinicaltrials.gov/search?term=${E(q)}&aggFilters=status:rec`},
+  {n:'ClinicalTrials.gov — planned', d:'Not yet recruiting', k:'direct', u:q=>`https://clinicaltrials.gov/search?term=${E(q)}&aggFilters=status:not`},
+  {n:'ClinicalTrials.gov — Australian sites', d:'Trials with a site in Australia', k:'direct', au:1, u:q=>`https://clinicaltrials.gov/search?term=${E(q)}&country=Australia`},
+  {n:'ANZCTR', d:'Australian New Zealand Clinical Trials Registry', k:'direct', au:1, u:q=>`https://www.anzctr.org.au/TrialSearch.aspx#&&searchTxt=${E(q)}&isBasic=True`},
+  {n:'Australian Cancer Trials', d:'Cancer Australia trial finder', k:'site', au:1, u:q=>site('australiancancertrials.gov.au', q)},
+  {n:'WHO ICTRP', d:'All primary registries worldwide', k:'open', u:()=>'https://trialsearch.who.int/'},
+  {n:'EU Clinical Trials Register', d:'EudraCT trials (pre-2023)', k:'direct', u:q=>`https://www.clinicaltrialsregister.eu/ctr-search/search?query=${E(q)}`},
+  {n:'EU CTIS', d:'EU Clinical Trials Information System', k:'open', u:()=>'https://euclinicaltrials.eu/search-for-clinical-trials/'},
+  {n:'ISRCTN', d:'UK-based international registry', k:'direct', u:q=>`https://www.isrctn.com/search?q=${E(q)}`},
+  {n:'jRCT (Japan)', d:'Japan Registry of Clinical Trials', k:'open', u:()=>'https://jrct.niph.go.jp/en-latest-list'},
+  {n:'ChiCTR (China)', d:'Chinese Clinical Trial Registry', k:'site', u:q=>site('chictr.org.cn', q)},
+  {n:'CTRI (India)', d:'Clinical Trials Registry – India', k:'open', u:()=>'https://ctri.nic.in/'},
+  {n:'Australian trial groups', d:'BCT, ANZUP, AGITG, ALTG, TROG, ALLG, ANZGOG', k:'site', au:1, u:q=>site(['breastcancertrials.org.au','anzup.org.au','gicancer.org.au','thoraciconcologygroup.org.au','trog.com.au','allg.org.au','anzgog.org.au'], q)}
+ ]},
+ {id:'bio', name:'Drug discovery platforms & biotech companies', blurb:'Companies, pipelines, patents and approvals for new cancer therapies.', items:[
+  {n:'Google Patents', d:'Platform technologies and compositions', k:'direct', u:q=>`https://patents.google.com/?q=${E('(' + q + ')')}`},
+  {n:'SEC EDGAR full-text', d:'US-listed biotech filings and pipelines', k:'direct', u:q=>`https://www.sec.gov/edgar/search/#/q=${E('"' + q + '"')}`},
+  {n:'ASX announcements', d:'Australian-listed biotech', k:'site', au:1, u:q=>site(['asx.com.au','marketindex.com.au'], q + ' oncology')},
+  {n:'Biotech news', d:'Fierce Biotech, Endpoints, BioSpace, STAT', k:'site', u:q=>site(['fiercebiotech.com','endpts.com','biospace.com','statnews.com'], q)},
+  {n:'BioPharma Dive & Evaluate', d:'Deals, pipelines, forecasts', k:'site', u:q=>site(['biopharmadive.com','evaluate.com'], q)},
+  {n:'Company profiles', d:'Crunchbase and company sites', k:'site', u:q=>site('crunchbase.com/organization', q + ' cancer')},
+  {n:'ChEMBL', d:'Bioactive molecules and targets', k:'direct', u:q=>`https://www.ebi.ac.uk/chembl/g/#search_results/all/query=${E(q)}`},
+  {n:'DrugBank', d:'Drug and target database', k:'direct', u:q=>`https://go.drugbank.com/unearth/q?searcher=drugs&query=${E(q)}`},
+  {n:'NCI Drug Dictionary', d:'Cancer drug definitions', k:'site', u:q=>site('cancer.gov/publications/dictionaries/cancer-drug', q)},
+  {n:'FDA oncology approvals', d:'Approvals and labels', k:'site', u:q=>site('fda.gov', q + ' oncology approval')},
+  {n:'TGA (Australia)', d:'ARTG, product information, approvals', k:'site', au:1, u:q=>site('tga.gov.au', q)},
+  {n:'PBS listings', d:'Australian reimbursement', k:'site', au:1, u:q=>site('pbs.gov.au', q)}
+ ]},
+ {id:'guide', name:'Cancer management guidelines', blurb:'International and Australian treatment guidelines.', items:[
+  {n:'NCCN Guidelines', d:'US consensus guidelines', k:'site', u:q=>site('nccn.org', q)},
+  {n:'ESMO Clinical Practice Guidelines', d:'European guidelines', k:'site', u:q=>site('esmo.org/guidelines', q)},
+  {n:'ASCO Guidelines', d:'Evidence-based guidance', k:'site', u:q=>site('ascopubs.org/doi/10.1200/JCO', q + ' guideline')},
+  {n:'eviQ', d:'Australian treatment protocols', k:'site', au:1, u:q=>site('eviq.org.au', q)},
+  {n:'Cancer Council Australia guidelines', d:'Clinical practice guidelines wiki', k:'site', au:1, u:q=>site(['cancer.org.au','wiki.cancer.org.au'], q + ' guideline')},
+  {n:'Optimal Care Pathways', d:'Australian care pathways', k:'site', au:1, u:q=>site('cancer.org.au/health-professionals/optimal-cancer-care-pathways', q)},
+  {n:'NCI PDQ', d:'Physician Data Query summaries', k:'direct', u:q=>`https://www.cancer.gov/search/results?swKeyword=${E(q)}`},
+  {n:'NICE', d:'UK guidance', k:'site', u:q=>site('nice.org.uk/guidance', q)}
+ ]},
+ {id:'stage', name:'Staging & toxicity grading', blurb:'TNM staging, response criteria and adverse-event grading.', items:[
+  {n:'AJCC staging', d:'American Joint Committee on Cancer', k:'site', u:q=>site('facs.org', q + ' AJCC staging')},
+  {n:'UICC TNM', d:'TNM classification', k:'site', u:q=>site('uicc.org', q + ' TNM')},
+  {n:'CTCAE', d:'Common Terminology Criteria for Adverse Events (NCI)', k:'open', u:()=>'https://ctep.cancer.gov/protocoldevelopment/electronic_applications/ctc.htm'},
+  {n:'CTCAE term search', d:'Search CTEP pages for a toxicity term', k:'site', u:q=>site('ctep.cancer.gov', q + ' CTCAE')},
+  {n:'PRO-CTCAE', d:'Patient-reported toxicity', k:'site', u:q=>site('healthcaredelivery.cancer.gov/pro-ctcae', q)},
+  {n:'RECIST & iRECIST', d:'Tumour response criteria', k:'site', u:q=>site(['recist.eortc.org','eortc.org'], q + ' RECIST')},
+  {n:'CRS & ICANS grading', d:'ASTCT consensus for CAR-T / bispecifics', k:'site', u:q=>site(['astct.org','pubmed.ncbi.nlm.nih.gov'], q + ' ASTCT consensus grading CRS ICANS')}
+ ]},
+ {id:'sci', name:'Basic science, pathways & hallmarks of cancer', blurb:'Signalling pathways, protein function and the hallmarks framework (Hanahan & Weinberg). Use the Hallmarks quick-add terms above.', items:[
+  {n:'PubMed — hallmarks', d:'Your keywords + "hallmarks of cancer"', k:'direct', u:q=>`https://pubmed.ncbi.nlm.nih.gov/?term=${E(q + ' AND "hallmarks of cancer"')}${rec()}`},
+  {n:'Reactome', d:'Curated pathways', k:'direct', u:q=>`https://reactome.org/content/query?q=${E(q)}`},
+  {n:'KEGG Pathway', d:'Pathway maps incl. cancer pathways', k:'direct', u:q=>`https://www.genome.jp/dbget-bin/www_bfind_sub?mode=bfind&max_hit=1000&dbkey=pathway&keywords=${E(q)}`},
+  {n:'UniProt', d:'Protein function and structure', k:'direct', u:q=>`https://www.uniprot.org/uniprotkb?query=${E(q)}`},
+  {n:'Human Protein Atlas', d:'Expression, pathology, cell atlas', k:'direct', u:q=>`https://www.proteinatlas.org/search/${E(q)}`},
+  {n:'STRING', d:'Protein interaction networks (human)', k:'direct', u:q=>`https://string-db.org/cgi/network?identifiers=${E(q)}&species=9606`},
+  {n:'NCBI Gene', d:'Gene summaries and links', k:'direct', u:q=>`https://www.ncbi.nlm.nih.gov/gene/?term=${E(q)}`},
+  {n:'Cell, Cancer Cell & Cancer Discovery', d:'High-impact basic science', k:'site', u:q=>site(['cell.com','aacrjournals.org/cancerdiscovery'], q)}
+ ]},
+ {id:'seq', name:'Tumour sequencing & genomic databases', blurb:'Somatic mutation, expression and actionability data. Most work best with a gene symbol.', items:[
+  {n:'cBioPortal', d:'TCGA and published cohorts', k:'open', u:()=>'https://www.cbioportal.org/'},
+  {n:'GDC Data Portal (TCGA)', d:'NCI Genomic Data Commons', k:'open', u:()=>'https://portal.gdc.cancer.gov/'},
+  {n:'COSMIC', d:'Catalogue of Somatic Mutations in Cancer', k:'direct', u:q=>`https://cancer.sanger.ac.uk/cosmic/search?q=${E(q)}`},
+  {n:'OncoKB', d:'Actionability levels for alterations', k:'open', u:()=>'https://www.oncokb.org/'},
+  {n:'CIViC', d:'Clinical interpretation of variants', k:'open', u:()=>'https://civicdb.org/'},
+  {n:'DepMap', d:'Cancer dependency map (cell lines)', k:'open', u:()=>'https://depmap.org/portal/'},
+  {n:'AACR Project GENIE', d:'Real-world clinical sequencing', k:'open', u:()=>'https://genie.cbioportal.org/'},
+  {n:'ICGC ARGO', d:'International Cancer Genome Consortium', k:'open', u:()=>'https://platform.icgc-argo.org/'},
+  {n:'Sequencing literature', d:'Your keywords + sequencing terms', k:'direct', u:q=>`https://pubmed.ncbi.nlm.nih.gov/?term=${E(q + ' AND (sequencing OR genomic profiling)')}${rec()}`}
+ ]},
+ {id:'germ', name:'Germline mutation & genetic testing', blurb:'Hereditary cancer variants, classification and testing guidance.', items:[
+  {n:'ClinVar', d:'Variant interpretation (NCBI)', k:'direct', u:q=>`https://www.ncbi.nlm.nih.gov/clinvar/?term=${E(q)}`},
+  {n:'gnomAD', d:'Population allele frequencies', k:'open', u:()=>'https://gnomad.broadinstitute.org/'},
+  {n:'BRCA Exchange', d:'BRCA1/2 variant classifications', k:'open', u:()=>'https://brcaexchange.org/'},
+  {n:'ClinGen', d:'Gene–disease validity, variant curation', k:'site', u:q=>site('clinicalgenome.org', q)},
+  {n:'InSiGHT (Lynch syndrome)', d:'Mismatch-repair variant database', k:'site', u:q=>site('insight-group.org', q)},
+  {n:'eviQ Cancer Genetics', d:'Australian germline testing criteria', k:'site', au:1, u:q=>site('eviq.org.au/cancer-genetics', q)},
+  {n:'NCCN genetic/familial guidelines', d:'High-risk assessment', k:'site', u:q=>site('nccn.org', q + ' genetic familial high-risk')},
+  {n:'GeneReviews', d:'Hereditary syndrome reviews', k:'site', u:q=>site('ncbi.nlm.nih.gov/books/NBK1116', q)}
+ ]},
+ {id:'inv', name:'Investigators & experts', blurb:'Find who is leading work on a topic. Put a name in Keywords for author searches.', items:[
+  {n:'PubMed — author', d:'Keywords searched as an author name', k:'direct', u:q=>`https://pubmed.ncbi.nlm.nih.gov/?term=${E(qRaw() + '[au]')}`},
+  {n:'Google Scholar — profiles', d:'Author profiles and citation counts', k:'direct', u:q=>`https://scholar.google.com/citations?view_op=search_authors&mauthors=${E(q)}`},
+  {n:'ORCID', d:'Researcher identifiers and outputs', k:'direct', u:q=>`https://orcid.org/orcid-search/search?searchQuery=${E(qRaw())}`},
+  {n:'Trials by investigator', d:'ClinicalTrials.gov text search', k:'direct', u:q=>`https://clinicaltrials.gov/search?term=${E(qRaw())}`},
+  {n:'Expertscape', d:'Experts ranked by topic', k:'site', u:q=>site('expertscape.com', q)},
+  {n:'Australian researchers', d:'University and institute pages', k:'site', au:1, u:q=>site(['edu.au','petermac.org','wehi.edu.au','garvan.org.au','olivianewtonjohnwellness.com.au'], q + ' oncology researcher')}
+ ]},
+ {id:'img', name:'Image search', blurb:'Find figures, pathology and radiology images by keyword. To search by an image you already have, use Google Lens and upload it there.', items:[
+  {n:'Open-i (NLM)', d:'Figures from biomedical literature', k:'direct', u:q=>`https://openi.nlm.nih.gov/gridquery?q=${E(q)}`},
+  {n:'Google Images', d:'Keyword image search', k:'direct', u:q=>`https://www.google.com/search?tbm=isch&q=${E(q)}`},
+  {n:'Google Lens', d:'Search by uploading an image', k:'open', u:()=>'https://lens.google.com/'},
+  {n:'Radiopaedia', d:'Radiology cases and images', k:'direct', u:q=>`https://radiopaedia.org/search?q=${E(q)}`},
+  {n:'PathologyOutlines', d:'Histopathology images and text', k:'site', u:q=>site('pathologyoutlines.com', q)},
+  {n:'Human Protein Atlas — pathology', d:'IHC images in tumours', k:'direct', u:q=>`https://www.proteinatlas.org/search/${E(q)}`},
+  {n:'The Cancer Imaging Archive', d:'De-identified cancer imaging collections', k:'site', u:q=>site('cancerimagingarchive.net', q)}
+ ]}
+];
+
+const CANCERS = ['Any cancer type','breast cancer','lung cancer','non-small cell lung cancer','small cell lung cancer','colorectal cancer','prostate cancer','melanoma','pancreatic cancer','ovarian cancer','endometrial cancer','cervical cancer','gastric cancer','oesophageal cancer','hepatocellular carcinoma','biliary tract cancer','renal cell carcinoma','bladder cancer','head and neck cancer','glioblastoma','sarcoma','neuroendocrine tumour','thyroid cancer','lymphoma','leukaemia','multiple myeloma','mesothelioma','solid tumours'];
+const HALLMARKS = ['sustaining proliferative signaling','evading growth suppressors','resisting cell death','enabling replicative immortality','inducing angiogenesis','activating invasion and metastasis','reprogramming energy metabolism','avoiding immune destruction','genome instability and mutation','tumor-promoting inflammation','unlocking phenotypic plasticity','nonmutational epigenetic reprogramming','polymorphic microbiomes','senescent cells'];
+const TRIALTERMS = ['phase 1','phase 2','phase 3','first-in-human','randomized','basket trial','umbrella trial','neoadjuvant','adjuvant','maintenance','overall survival','progression-free survival'];
+const MODALITIES = ['antibody-drug conjugate','bispecific antibody','CAR-T','radioligand therapy','immune checkpoint inhibitor','PROTAC','KRAS inhibitor','cancer vaccine','mRNA','oncolytic virus','synthetic lethality','PARP inhibitor'];
+
+/* ---------- state + query building ---------- */
+const $ = id => document.getElementById(id);
+const store = {get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}, set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+const rec = () => $('recent').checked ? '&filter=datesearch.y_5' : '';
+const qRaw = () => $('q').value.trim();
+function buildQuery(){
+  const kw = qRaw(), parts = [];
+  if (kw) parts.push($('exact').checked && !/^".*"$/.test(kw) ? `"${kw}"` : kw);
+  if ($('ct').value && $('ct').selectedIndex > 0) parts.push($('ct').value);
+  if ($('gene').value.trim()) parts.push($('gene').value.trim());
+  if ($('drug').value.trim()) parts.push($('drug').value.trim());
+  return parts.join(' ');
+}
+
+/* ---------- render ---------- */
+function render(){
+  const q = buildQuery(), f = $('filter').value.trim().toLowerCase();
+  $('preview').innerHTML = `Search string: <b>${q ? q.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])) : 'type keywords above'}</b>`;
+  let total = 0;
+  const cats = allCats();
+  $('cats').innerHTML = cats.map(c => {
+    const items = c.items.filter(s => !f || (s.n + ' ' + s.d).toLowerCase().includes(f));
+    total += items.length;
+    if (!items.length) return '';
+    return `<section class="cat" id="cat-${c.id}"><div class="cat-h"><div class="cat-tools"><h2>${c.name}</h2><button type="button" class="linkbtn" data-sacat-only="${esc(c.id)}">Open all in this category →</button></div><p>${c.blurb}</p></div><div class="grid">${
+      items.map(s => {
+        let href; try { href = s.k === 'open' || !q ? (s.k === 'open' ? s.u() : homeOf(s)) : s.u(q); } catch(e){ href = '#'; }
+        const tag = (s.mine ? '<span class="m mine">Mine</span>' : '') + (s.k === 'direct' ? '<span class="m direct">Direct</span>' : s.k === 'site' ? '<span class="m site">Web search</span>' : '<span class="m open">Opens site</span>');
+        const card = `<a class="src" href="${esc(href)}" target="_blank" rel="noopener" data-open="${s.k==='open'?1:0}"><span class="n">${esc(s.n)}</span><span class="d">${esc(s.d)}</span><span style="display:flex;align-items:center;gap:6px">${tag}${s.au ? '<span class="au">AU</span>' : ''}</span></a>`;
+        return s.mine ? `<div class="srcwrap">${card}<button type="button" class="del" data-delsrc="${esc(s.id)}" aria-label="Remove ${esc(s.n)}" title="Remove">×</button></div>` : card;
+      }).join('')}</div></section>`;
+  }).join('');
+  $('count').textContent = `${total} sources${q ? ' searching for your keywords' : ''}`;
+  $('nav').innerHTML = cats.map(c => `<a href="#cat-${c.id}">${esc(c.name.replace(' & literature','').replace('Trial registries: ','Registries: '))}<span>${c.items.length}</span></a>`).join('')
+    + `<a href="#directory">Source directory<span>${cats.reduce((n,c) => n + c.items.length, 0)}</span></a>`;
+  renderDir(); liveStale();
+  if (!$('sa').hidden) saRender();
+}
+
+/* ---------- source directory ---------- */
+const KIND_LABEL = {direct:'Direct', site:'Web search', open:'Opens site'};
+function domainsOf(s){
+  try {
+    if (s.k === 'open') return [new URL(s.u()).host.replace(/^www\./,'')];
+    const url = new URL(s.u('x'));
+    if (s.k === 'site'){
+      const m = (url.searchParams.get('q') || '').match(/site:[^\s)]+/g) || [];
+      return m.map(x => x.slice(5));
+    }
+    return [url.host.replace(/^www\./,'')];
+  } catch(e){ return []; }
+}
+let dirOpen = null;
+function renderDir(){
+  const cats = allCats();
+  if (dirOpen) dirOpen = new Set([...document.querySelectorAll('.dir details[open]')].map(d => d.dataset.id));
+  const total = cats.reduce((n,c) => n + c.items.length, 0);
+  $('dirSum').textContent = `${total} sources in ${cats.length} categories. Direct sources run on the site's own search; Web search sources use Google limited to the listed domains.`;
+  $('dirBody').innerHTML = `<div class="tools"><button type="button" class="linkbtn" id="dirExpand">Expand all</button><button type="button" class="linkbtn" id="dirCollapse">Collapse all</button></div>` +
+    cats.map(c => `<details data-id="${esc(c.id)}"${dirOpen && dirOpen.has(c.id) ? ' open' : ''}><summary><span class="nm">${esc(c.name)}</span><span class="ct">${c.items.length} sources</span></summary><div class="tbl"><table><thead><tr><th>Source</th><th>Covers</th><th>How it searches</th><th>Domain</th></tr></thead><tbody>${
+      c.items.map(s => `<tr><td class="src-n">${esc(s.n)}${s.au ? ' <span class="au">AU</span>' : ''}${s.mine ? ' <span class="m mine">Mine</span>' : ''}</td><td>${esc(s.d)}</td><td class="how"><span class="m ${s.k}">${KIND_LABEL[s.k]}</span></td><td class="dom">${domainsOf(s).map(esc).join('<br>')}</td></tr>`).join('')
+    }</tbody></table></div></details>`).join('');
+  dirOpen = dirOpen || new Set();
+}
+$('dirBody').addEventListener('toggle', () => { dirOpen = new Set([...document.querySelectorAll('.dir details[open]')].map(d => d.dataset.id)); }, true);
+$('dirBody').addEventListener('click', e => {
+  if (e.target.id === 'dirExpand' || e.target.id === 'dirCollapse'){
+    const open = e.target.id === 'dirExpand';
+    document.querySelectorAll('.dir details').forEach(d => d.open = open);
+  }
+});
+
+/* =====================================================================
+   SEARCH ALL
+   Browsers let one click open only one tab unless pop-ups are allowed
+   for the page. "Open all" tries every tab; whatever is blocked stays
+   in the list, and "Open next" (a real link) opens one per click.
+   ===================================================================== */
+let saScope = store.get('orf-sa-scope', {off:[], open:false, au:false});
+let saOnly = null, saDone = new Set(), saDoneQ = '', saItems = [], saLastFocus = null;
+function saCount(c){ return c.items.filter(s => (s.k !== 'open' || saScope.open) && (!saScope.au || s.au)).length; }
+function saBuild(){
+  const q = buildQuery();
+  if (q !== saDoneQ){ saDone = new Set(); saDoneQ = q; $('saNote').hidden = true; }
+  saItems = [];
+  allCats().forEach(c => {
+    const on = saOnly ? saOnly === c.id : !saScope.off.includes(c.id);
+    if (!on) return;
+    c.items.forEach(s => {
+      if (s.k === 'open' && !saScope.open) return;
+      if (saScope.au && !s.au) return;
+      let href; try { href = s.k === 'open' ? s.u() : s.u(q); } catch(e){ return; }
+      saItems.push({key:c.id + '|' + (s.id || s.n), n:s.n, cat:c.name, catId:c.id, k:s.k, au:s.au, href});
+    });
+  });
+}
+function saRender(){
+  saBuild();
+  const q = buildQuery(), cats = allCats();
+  $('saQ').textContent = q || 'No keywords yet';
+  $('saScope').innerHTML = cats.map(c => {
+    const on = saOnly ? saOnly === c.id : !saScope.off.includes(c.id);
+    return `<label class="sa-chip"><input type="checkbox" data-sacat="${esc(c.id)}"${on ? ' checked' : ''}>${esc(c.name.replace(' & literature','').replace('Trial registries: ','Registries: '))}<span>${saCount(c)}</span></label>`;
+  }).join('');
+  $('saOpen').checked = !!saScope.open; $('saAu').checked = !!saScope.au;
+  const left = saItems.filter(x => !saDone.has(x.key)), done = saItems.length - left.length, next = left[0];
+  $('saAll').textContent = left.length ? (done ? `Open remaining ${left.length}` : `Open all ${left.length}`) : 'All opened';
+  $('saAll').disabled = !left.length;
+  const nx = $('saNext');
+  nx.href = next ? next.href : '#';
+  nx.setAttribute('aria-disabled', next ? 'false' : 'true');
+  nx.firstChild.textContent = next ? `Open next: ${next.n}` : 'Open next';
+  $('saBar').style.width = saItems.length ? (100 * done / saItems.length) + '%' : '0';
+  $('saCount').textContent = `${done} of ${saItems.length} opened`;
+  $('saHint').textContent = left.length > 25 ? `${left.length} tabs is a lot. Untick categories to narrow it.` : 'Each search opens in its own tab.';
+  let html = '', cur = '';
+  saItems.forEach(x => {
+    if (x.cat !== cur){ cur = x.cat; html += `<h3>${esc(cur)}</h3>`; }
+    const cls = saDone.has(x.key) ? ' done' : (next && next.key === x.key ? ' next' : '');
+    html += `<div class="sa-row${cls}"><span class="st" aria-hidden="true">✓</span><a href="${esc(x.href)}" target="_blank" rel="noopener" data-sakey="${esc(x.key)}">${esc(x.n)}</a>${x.au ? '<span class="au">AU</span>' : ''}<span class="m ${x.k}">${KIND_LABEL[x.k]}</span></div>`;
+  });
+  $('saList').innerHTML = html || '<div class="sa-empty">No sources selected. Tick a category above.</div>';
+}
+function saCopyIfNeeded(items){
+  if (!items.some(x => x.k === 'open')) return;
+  const q = buildQuery(); if (!q) return;
+  try { navigator.clipboard.writeText(q).catch(() => {}); } catch(e){}
+}
+function saOpenPanel(only){
+  if (!buildQuery()){ toast('Type some keywords first.'); $('q').focus(); return; }
+  saOnly = only || null; saLastFocus = document.activeElement;
+  $('sa').hidden = false; $('saBack').hidden = false; document.body.style.overflow = 'hidden';
+  saRender(); $('saAll').focus();
+}
+function saClosePanel(){
+  $('sa').hidden = true; $('saBack').hidden = true; document.body.style.overflow = ''; saOnly = null;
+  if (saLastFocus && saLastFocus.focus) saLastFocus.focus();
+}
+$('searchAll').addEventListener('click', () => saOpenPanel());
+$('cats').addEventListener('click', e => { const b = e.target.closest('[data-sacat-only]'); if (b) saOpenPanel(b.dataset.sacatOnly); });
+$('saClose').addEventListener('click', saClosePanel);
+$('saBack').addEventListener('click', saClosePanel);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('sa').hidden) saClosePanel(); });
+$('saScope').addEventListener('change', e => {
+  const cb = e.target.closest('[data-sacat]'); if (!cb) return;
+  if (saOnly){ saScope.off = allCats().map(c => c.id).filter(id => id !== saOnly); saOnly = null; }
+  const id = cb.dataset.sacat;
+  saScope.off = cb.checked ? saScope.off.filter(x => x !== id) : [...new Set([...saScope.off, id])];
+  store.set('orf-sa-scope', saScope); saRender();
+});
+$('saOpen').addEventListener('change', e => { saScope.open = e.target.checked; store.set('orf-sa-scope', saScope); saRender(); });
+$('saAu').addEventListener('change', e => { saScope.au = e.target.checked; store.set('orf-sa-scope', saScope); saRender(); });
+$('saReset').addEventListener('click', () => { saDone = new Set(); $('saNote').hidden = true; saRender(); });
+$('saAll').addEventListener('click', () => {
+  const todo = saItems.filter(x => !saDone.has(x.key));
+  saCopyIfNeeded(todo);
+  let opened = 0;
+  for (const x of todo){
+    let w = null;
+    try { w = window.open(x.href, '_blank'); } catch(e){}
+    if (!w) break;
+    try { w.opener = null; } catch(e){}
+    saDone.add(x.key); opened++;
+  }
+  const left = todo.length - opened, note = $('saNote');
+  if (!left){ note.hidden = true; toast(`Opened ${opened} searches.`); }
+  else {
+    note.hidden = false;
+    note.textContent = opened
+      ? `Opened ${opened}. Your browser blocked the other ${left}. Allow pop-ups for this page (the icon at the right of the address bar) and press "Open remaining", or use "Open next" to open them one click at a time.`
+      : `Your browser did not let this page open several tabs at once. Use "Open next": each click opens the next search, and the list ticks them off as you go.`;
+  }
+  saRender();
+});
+/* "Open next" and the list rows are real links: let the click open the tab, then tick it off. */
+function saMark(key){ const x = saItems.find(i => i.key === key); if (x){ saCopyIfNeeded([x]); saDone.add(key); } setTimeout(saRender, 0); }
+$('saNext').addEventListener('click', e => {
+  const next = saItems.find(x => !saDone.has(x.key));
+  if (!next){ e.preventDefault(); return; }
+  saMark(next.key);
+});
+$('saList').addEventListener('click', e => { const a = e.target.closest('a[data-sakey]'); if (a) saMark(a.dataset.sakey); });
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* Built-in categories plus the viewer's own sources (a "My sources" group first when used). */
+function toItem(c){
+  const base = {n:c.name, d:c.desc || (c.kind === 'search' ? 'My search address' : c.kind === 'site' ? 'Searches this website' : 'My bookmark'), mine:true, id:c.id};
+  if (c.kind === 'search') return {...base, k:'direct', u:q => c.url.split('{q}').join(E(q))};
+  if (c.kind === 'site')   return {...base, k:'site', u:q => site(c.url, q)};
+  return {...base, k:'open', u:() => c.url};
+}
+function allCats(){
+  const out = [];
+  const own = custom.filter(c => c.cat === 'mine').map(toItem);
+  if (own.length) out.push({id:'mine', name:'My sources', blurb:'Sources you added that are not in another category.', items:own});
+  CATS.forEach(c => out.push({...c, items:[...c.items, ...custom.filter(x => x.cat === c.id).map(toItem)]}));
+  return out;
+}
+/* With no keywords yet, link to the site's front page instead of an empty search. */
+function homeOf(s){
+  if (s.k === 'open') return s.u();
+  try {
+    const url = new URL(s.u('x'));
+    if (s.k === 'site'){ const m = (url.searchParams.get('q') || '').match(/site:([^\s)]+)/); return m ? 'https://' + m[1] : url.href; }
+    return url.origin;
+  } catch(e){ return s.u(''); }
+}
+
+/* "Opens site" sources: copy keywords so they can be pasted into the site's own search. */
+document.addEventListener('click', e => {
+  const a = e.target.closest('a.src'); if (!a || a.dataset.open !== '1') return;
+  const q = buildQuery(); if (!q) return;
+  try { navigator.clipboard.writeText(q).then(() => toast('Keywords copied. Paste them into the site\'s search box.'), () => {}); } catch(err){}
+});
+let tt; function toast(m){ let t = document.querySelector('.toast'); if (!t){ t = document.createElement('div'); t.className = 'toast'; document.body.appendChild(t); } t.textContent = m; t.hidden = false; clearTimeout(tt); tt = setTimeout(() => t.hidden = true, 2600); }
+
+/* ---------- chips ---------- */
+function chips(id, list, cls){
+  const el = $(id); el.insertAdjacentHTML('beforeend', list.map(t => `<button type="button" class="chip ${cls}" data-t="${t}">${t}</button>`).join(''));
+}
+chips('chipsH', HALLMARKS, 'h'); chips('chipsT', TRIALTERMS, ''); chips('chipsM', MODALITIES, '');
+document.querySelector('.query').addEventListener('click', e => {
+  const c = e.target.closest('.chip'); if (!c) return;
+  const cur = qRaw(); $('q').value = (cur ? cur + ' ' : '') + c.dataset.t; render(); $('q').focus();
+});
+
+/* ---------- saved searches (this browser only) ---------- */
+const DEFAULT_SAVED = [
+  {name:'KRAS G12C in NSCLC', q:'', ct:'non-small cell lung cancer', gene:'KRAS G12C', drug:''},
+  {name:'ADCs in breast cancer', q:'antibody-drug conjugate', ct:'breast cancer', gene:'', drug:''},
+  {name:'Immune evasion hallmark', q:'avoiding immune destruction', ct:'', gene:'', drug:''}
+];
+/* =====================================================================
+   STORAGE: saved searches and my sources live in this device's
+   local storage. Export / Import moves them between devices.
+   ===================================================================== */
+let saved = store.get('orf-saved', DEFAULT_SAVED);
+let custom = store.get('orf-sources', []);
+function storageNote(){ $('storeNote').textContent = 'Saved on this device.'; }
+function persist(){ store.set('orf-saved', saved); store.set('orf-sources', custom); }
+
+$('exportBtn').addEventListener('click', async () => {
+  const body = JSON.stringify({app:'oncology-research-finder', version:1, exportedAt:new Date().toISOString(), saved, sources:custom}, null, 2);
+  const name = 'onco-finder-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  const blob = new Blob([body], {type:'application/json'});
+  try {
+    const file = new File([blob], name, {type:'application/json'});
+    if (navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file], title:'Oncology Research Finder backup'}); return; }
+  } catch(e){ if (e && e.name === 'AbortError') return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  toast('Backup saved as ' + name);
+});
+$('importBtn').addEventListener('click', () => $('importFile').click());
+$('importFile').addEventListener('change', async e => {
+  const f = e.target.files && e.target.files[0]; e.target.value = ''; if (!f) return;
+  try {
+    const d = JSON.parse(await f.text());
+    if (!d || (!Array.isArray(d.saved) && !Array.isArray(d.sources))) throw new Error('shape');
+    const okS = x => x && typeof x.name === 'string';
+    const okC = x => x && typeof x.name === 'string' && typeof x.url === 'string' && ['search','site','link'].includes(x.kind);
+    let addS = 0, addC = 0;
+    (d.saved || []).filter(okS).forEach(x => {
+      const item = {name:x.name, q:String(x.q||''), ct:String(x.ct||''), gene:String(x.gene||''), drug:String(x.drug||'')};
+      if (!saved.some(y => y.name === item.name && y.q === item.q && y.ct === item.ct && y.gene === item.gene && y.drug === item.drug)){ saved.push(item); addS++; }
+    });
+    (d.sources || []).filter(okC).forEach(x => {
+      if (x.kind !== 'site' && !/^https?:\/\//i.test(x.url)) return;
+      const cat = x.cat === 'mine' || CATS.some(c => c.id === x.cat) ? x.cat : 'mine';
+      if (!custom.some(y => y.url === x.url && y.name === x.name)){ custom.push({id:String(x.id || 's' + Date.now().toString(36) + addC), name:x.name, cat, kind:x.kind, url:x.url, desc:String(x.desc||'')}); addC++; }
+    });
+    persist(); renderSaved(); render();
+    toast(`Imported ${addS} saved search${addS === 1 ? '' : 'es'} and ${addC} source${addC === 1 ? '' : 's'}.`);
+  } catch(err){ toast('That file is not an Oncology Research Finder backup.'); }
+});
+function renderSaved(){
+  $('savedList').innerHTML = saved.length ? saved.map((s,i) => `<span class="sv"><button type="button" data-load="${i}" title="${esc([s.q,s.ct,s.gene,s.drug].filter(Boolean).join(' · '))}">${esc(s.name)}</button><button type="button" class="x" data-del="${i}" aria-label="Delete ${esc(s.name)}">×</button></span>`).join('')
+    : '<span class="empty">No saved searches yet. Build a search above and press "Save this search".</span>';
+}
+$('savedList').addEventListener('click', e => {
+  const l = e.target.closest('[data-load]'), d = e.target.closest('[data-del]');
+  if (l){ const s = saved[+l.dataset.load]; $('q').value = s.q; $('gene').value = s.gene; $('drug').value = s.drug; $('ct').value = s.ct || CANCERS[0]; if (!s.ct) $('ct').selectedIndex = 0; render(); }
+  if (d){ saved.splice(+d.dataset.del, 1); persist(); renderSaved(); }
+});
+$('save').addEventListener('click', () => {
+  const q = buildQuery(); if (!q){ toast('Type some keywords first.'); return; }
+  const name = q.length > 40 ? q.slice(0, 39) + '…' : q;
+  saved.push({name, q:qRaw(), ct: $('ct').selectedIndex > 0 ? $('ct').value : '', gene:$('gene').value.trim(), drug:$('drug').value.trim()});
+  persist(); renderSaved(); toast('Saved.');
+});
+
+/* ---------- add your own source ---------- */
+function renderCatSelect(){
+  const cur = $('sCat').value;
+  $('sCat').innerHTML = '<option value="mine">My sources (own group)</option>' + CATS.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  if (cur) $('sCat').value = cur;
+}
+const kindNow = () => document.querySelector('input[name=sKind]:checked').value;
+function syncKind(){
+  const k = kindNow();
+  $('wordLbl').hidden = k !== 'search';
+  $('urlTitle').textContent = k === 'search' ? 'Search results address' : k === 'site' ? 'Website address' : 'Page address';
+  $('urlHint').innerHTML = k === 'search'
+    ? 'On the site, search for any word (for example <b>melanoma</b>), then copy the address of the results page and paste it here.'
+    : k === 'site' ? 'For example <b>petermac.org</b> or <b>nature.com/nrclinonc</b>. A Google search is limited to this site.'
+    : 'Any page you want one click away, such as a database home page or a login page.';
+}
+document.querySelectorAll('input[name=sKind]').forEach(r => r.addEventListener('change', syncKind));
+function openForm(open){
+  $('addForm').hidden = !open; $('addToggle').setAttribute('aria-expanded', open);
+  $('sErr').textContent = ''; if (open) $('sName').focus();
+}
+$('addToggle').addEventListener('click', () => openForm($('addForm').hidden));
+$('addCancel').addEventListener('click', () => openForm(false));
+$('addForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = $('sName').value.trim(), kind = kindNow(), word = $('sWord').value.trim();
+  let url = $('sUrl').value.trim(), err = '';
+  if (!name) err = 'Give the source a name.';
+  else if (!url) err = 'Paste an address.';
+  if (!err && kind !== 'site' && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+  if (!err && kind !== 'site'){ try { new URL(url); } catch(x){ err = 'That address does not look right. Copy it from the browser\'s address bar.'; } }
+  if (!err && kind === 'site') url = url.replace(/^https?:\/\//i, '').replace(/\/+$/, '');
+  if (!err && kind === 'search' && !url.includes('{q}')){
+    if (!word) err = 'Enter the word you searched for, so it can be swapped for your keywords.';
+    else {
+      // The word can appear encoded several ways in an address; replace whichever is there.
+      const forms = [encodeURIComponent(word), word.split(' ').map(encodeURIComponent).join('+'), word.replace(/ /g, '+'), word, encodeURIComponent(word.toLowerCase()), word.toLowerCase()];
+      const hit = forms.find(f => f && url.includes(f));
+      if (!hit) err = `Could not find "${word}" in that address. Check the spelling, or use the Website option instead.`;
+      else url = url.split(hit).join('{q}');
+    }
+  }
+  if (err){ $('sErr').textContent = err; return; }
+  custom.push({id:'s' + Date.now().toString(36), name, cat:$('sCat').value, kind, url, desc:$('sDesc').value.trim()});
+  persist(); render();
+  ['sName','sUrl','sWord','sDesc'].forEach(id => $(id).value = '');
+  document.querySelector('input[name=sKind][value=search]').checked = true; syncKind();
+  openForm(false); toast(`Added "${name}".`);
+  const sec = document.getElementById('cat-' + custom[custom.length-1].cat); if (sec) sec.scrollIntoView({behavior:'smooth', block:'start'});
+});
+$('cats').addEventListener('click', e => {
+  const b = e.target.closest('[data-delsrc]'); if (!b) return;
+  e.preventDefault();
+  const i = custom.findIndex(c => c.id === b.dataset.delsrc); if (i < 0) return;
+  const gone = custom.splice(i, 1)[0]; persist(); render(); toast(`Removed "${gone.name}".`);
+});
+
+/* =====================================================================
+   LIVE RESULTS: PubMed (NCBI E-utilities), Europe PMC preprints and
+   ClinicalTrials.gov (API v2), fetched straight from this device.
+   ===================================================================== */
+const TOOL = 'oncology-research-finder';
+let liveQ = '', liveCtl = null;
+const dec = s => { const t = document.createElement('textarea'); t.innerHTML = String(s || ''); return t.value.replace(/<(sup|sub)>/gi, '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim(); };
+const nf = n => Number(n || 0).toLocaleString('en-AU');
+async function getJSON(url, signal){
+  const r = await fetch(url, {signal, headers:{Accept:'application/json'}});
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+function skel(){ return '<div aria-hidden="true">' + Array.from({length:4}, () => '<div class="sk"><i></i><i></i><i></i></div>').join('') + '</div>'; }
+function list(items){
+  return '<ol class="rl">' + items.map(it => `<li><a href="${esc(it.href)}" target="_blank" rel="noopener">${esc(it.title)}</a>${it.meta ? `<span class="rm">${esc(it.meta)}</span>` : ''}${it.tags && it.tags.length ? `<span class="rtags">${it.tags.map(t => `<span class="rtag ${t.c || ''}">${esc(t.t)}</span>`).join('')}</span>` : ''}</li>`).join('') + '</ol>';
+}
+function setCol(p, html, count, foot){
+  $(p + 'Body').innerHTML = html;
+  $(p + 'Count').textContent = count == null ? '' : `${nf(count)} result${count === 1 ? '' : 's'}`;
+  $(p + 'Foot').hidden = !foot; $(p + 'Foot').innerHTML = foot || '';
+}
+function failCol(p, err, href, site){
+  if (err && err.name === 'AbortError') return;
+  const why = navigator.onLine === false ? 'You are offline.' : 'The results could not be loaded in the app just now.';
+  setCol(p, `<div class="lmsg">${why} <a href="${esc(href)}" target="_blank" rel="noopener">Open this search on ${esc(site)} ↗</a></div>`, null, '');
+}
+const authorsOf = a => { const n = (a || []).map(x => x.name).filter(Boolean); return n.length ? n.slice(0, 3).join(', ') + (n.length > 3 ? ' et al.' : '') : ''; };
+const PT_SHOW = {'Randomized Controlled Trial':'RCT','Clinical Trial, Phase III':'Phase 3','Clinical Trial, Phase II':'Phase 2','Clinical Trial, Phase I':'Phase 1','Clinical Trial':'Clinical trial','Meta-Analysis':'Meta-analysis','Systematic Review':'Systematic review','Review':'Review','Practice Guideline':'Guideline','Guideline':'Guideline'};
+
+async function loadPubMed(q, signal){
+  const sort = $('pmSort').value, recent = $('recent').checked;
+  const see = `https://pubmed.ncbi.nlm.nih.gov/?term=${E(q)}${sort === 'pub_date' ? '&sort=date' : ''}${rec()}`;
+  setCol('pm', skel(), null, '');
+  try {
+    let u = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&retmax=10&sort=${sort}&term=${E(q)}&tool=${TOOL}`;
+    if (recent) u += '&datetype=pdat&reldate=1826';
+    const s = await getJSON(u, signal), r = s.esearchresult || {}, ids = r.idlist || [], count = +r.count || 0;
+    if (!ids.length){ setCol('pm', '<div class="lmsg">No PubMed records match. Try fewer or broader terms.</div>', 0, ''); return; }
+    const sm = await getJSON(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&retmode=json&id=${ids.join(',')}&tool=${TOOL}`, signal);
+    const items = ids.map(id => sm.result && sm.result[id]).filter(Boolean).map(d => {
+      const tags = [...new Set((d.pubtype || []).map(t => PT_SHOW[t]).filter(Boolean))].slice(0, 2).map(t => ({t, c:'ok'}));
+      return {title:dec(d.title), href:`https://pubmed.ncbi.nlm.nih.gov/${d.uid}/`, meta:[authorsOf(d.authors), dec(d.source), d.pubdate].filter(Boolean).join(' · '), tags};
+    });
+    setCol('pm', list(items), count, `<a href="${esc(see)}" target="_blank" rel="noopener">See all ${nf(count)} on PubMed ↗</a>`);
+  } catch(e){ failCol('pm', e, see, 'PubMed'); }
+}
+
+async function loadPreprints(q, signal){
+  const query = `(${q}) AND SRC:PPR`;
+  const see = `https://europepmc.org/search?query=${E(query)}&sortBy=FIRST_PDATE_D%2Bdesc`;
+  setCol('pp', skel(), null, '');
+  try {
+    const base = `https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&resultType=lite&pageSize=10&query=${E(query)}`;
+    let d;
+    try { d = await getJSON(base + '&sort=' + E('FIRST_PDATE desc'), signal); }
+    catch(e){ if (e.name === 'AbortError') throw e; d = await getJSON(base, signal); }
+    const rs = (d.resultList && d.resultList.result) || [], count = +d.hitCount || 0;
+    if (!rs.length){ setCol('pp', '<div class="lmsg">No preprints match these terms.</div>', 0, ''); return; }
+    const items = rs.map(r => {
+      const server = (r.bookOrReportDetails && r.bookOrReportDetails.publisher) || r.journalTitle || 'Preprint';
+      return {title:dec(r.title), href:`https://europepmc.org/article/${r.source}/${r.id}`, meta:[r.authorString && r.authorString.length > 90 ? r.authorString.slice(0, 88) + '…' : r.authorString, r.firstPublicationDate || r.pubYear].filter(Boolean).join(' · '), tags:[{t:server, c:'vi'}]};
+    });
+    setCol('pp', list(items), count, `<a href="${esc(see)}" target="_blank" rel="noopener">See all ${nf(count)} on Europe PMC ↗</a>`);
+  } catch(e){ failCol('pp', e, see, 'Europe PMC'); }
+}
+
+const PHASE = {EARLY_PHASE1:'Early phase 1', PHASE1:'Phase 1', PHASE2:'Phase 2', PHASE3:'Phase 3', PHASE4:'Phase 4'};
+const STATUS = {RECRUITING:'Recruiting', NOT_YET_RECRUITING:'Not yet recruiting'};
+async function loadTrials(q, signal){
+  const au = $('ctAu').checked;
+  const see = `https://clinicaltrials.gov/search?term=${E(q)}&aggFilters=status:not%20rec${au ? '&country=Australia' : ''}`;
+  setCol('ct', skel(), null, '');
+  try {
+    let u = `https://clinicaltrials.gov/api/v2/studies?format=json&pageSize=10&countTotal=true&query.term=${E(q)}&filter.overallStatus=RECRUITING,NOT_YET_RECRUITING`;
+    if (au) u += '&query.locn=' + E('Australia');
+    const d = await getJSON(u, signal), st = d.studies || [], count = d.totalCount != null ? +d.totalCount : st.length;
+    if (!st.length){ setCol('ct', `<div class="lmsg">No open trials match${au ? ' with an Australian site' : ''}.</div>`, 0, `<a href="${esc(see)}" target="_blank" rel="noopener">Search ClinicalTrials.gov ↗</a>`); return; }
+    const items = st.map(s => {
+      const p = s.protocolSection || {}, id = p.identificationModule || {}, ss = p.statusModule || {}, ds = p.designModule || {}, sp = p.sponsorCollaboratorsModule || {};
+      const locs = ((p.contactsLocationsModule || {}).locations) || [];
+      const nAu = locs.filter(l => l.country === 'Australia').length;
+      const phase = (ds.phases || []).map(x => PHASE[x]).filter(Boolean).join(' / ');
+      const tags = [{t:STATUS[ss.overallStatus] || ss.overallStatus, c:'ok'}];
+      if (phase) tags.push({t:phase});
+      if (nAu) tags.push({t:`${nAu} AU site${nAu > 1 ? 's' : ''}`, c:'vi'});
+      return {title:dec(id.briefTitle || id.officialTitle || id.nctId), href:`https://clinicaltrials.gov/study/${id.nctId}`, meta:[id.nctId, sp.leadSponsor && sp.leadSponsor.name].filter(Boolean).join(' · '), tags};
+    });
+    setCol('ct', list(items), count, `<a href="${esc(see)}" target="_blank" rel="noopener">See all ${nf(count)} on ClinicalTrials.gov ↗</a>`);
+  } catch(e){ failCol('ct', e, see, 'ClinicalTrials.gov'); }
+}
+
+function runLive(){
+  const q = buildQuery();
+  if (!q){ toast('Type some keywords first.'); $('q').focus(); return; }
+  if (liveCtl) liveCtl.abort();
+  liveCtl = new AbortController(); liveQ = q; liveStale();
+  $('liveSum').textContent = `Results for: ${q}`;
+  loadPubMed(q, liveCtl.signal); loadPreprints(q, liveCtl.signal); loadTrials(q, liveCtl.signal);
+  if (window.matchMedia('(max-width:900px)').matches) $('live').scrollIntoView({behavior:'smooth', block:'start'});
+}
+function liveStale(){
+  const q = buildQuery(), el = $('stale');
+  el.hidden = !liveQ || q === liveQ;
+  if (!el.hidden) el.textContent = q ? 'Your search has changed. Press Search to update these results.' : 'These results are for your previous search.';
+}
+['pmSort','ctAu'].forEach(id => $(id).addEventListener('change', () => {
+  store.set('orf-live', {pmSort:$('pmSort').value, ctAu:$('ctAu').checked});
+  if (!liveQ) return;
+  if (id === 'pmSort') loadPubMed(liveQ, liveCtl.signal); else loadTrials(liveQ, liveCtl.signal);
+}));
+(() => { const o = store.get('orf-live', {}); if (o.pmSort) $('pmSort').value = o.pmSort; $('ctAu').checked = !!o.ctAu; })();
+$('qform').addEventListener('submit', e => { e.preventDefault(); if (document.activeElement && document.activeElement.blur && window.matchMedia('(max-width:900px)').matches) document.activeElement.blur(); runLive(); });
+
+/* Offline indicator and app updates */
+function netState(){ $('offline').hidden = navigator.onLine !== false; }
+addEventListener('online', netState); addEventListener('offline', netState); netState();
+if ('serviceWorker' in navigator && location.protocol === 'https:'){
+  addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+
+/* ---------- wire up ---------- */
+$('ct').innerHTML = CANCERS.map((c,i) => `<option value="${i ? c : ''}">${c}</option>`).join('');
+['q','gene','drug','filter'].forEach(id => $(id).addEventListener('input', render));
+['ct','exact','recent'].forEach(id => $(id).addEventListener('change', render));
+$('clear').addEventListener('click', () => { ['q','gene','drug'].forEach(id => $(id).value = ''); $('ct').selectedIndex = 0; render(); $('q').focus(); });
+/* Loading a saved search runs it straight away. */
+$('savedList').addEventListener('click', e => { if (e.target.closest('[data-load]')) runLive(); });
+renderCatSelect(); syncKind(); storageNote(); renderSaved(); render();
+</script>
+
+</body></html>
